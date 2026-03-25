@@ -11,6 +11,36 @@ Qinlong v2 是一个面向 A 股短线交易场景的量化终端重构项目，
 - AI 对话接口与提供商配置能力
 - FastAPI + React + TypeScript 的前后端分离架构
 
+## 项目截图
+
+> 你可以将项目截图放到 `docs/screenshots/` 目录，并替换下面的占位链接。
+
+| 仪表盘主页 | 行情页 |
+|---|---|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Market](docs/screenshots/market.png) |
+
+## 快速开始
+
+如果你只想尽快把项目跑起来，可以直接执行下面这几步：
+
+```bash
+cp backend/.env.example backend/.env
+make install
+make migrate
+make dev-backend
+```
+
+新开一个终端后，再启动前端：
+
+```bash
+make dev-frontend
+```
+
+启动后：
+
+- 前端默认地址：`http://localhost:5173`
+- 后端默认地址：`http://localhost:8000`
+
 ## 技术栈
 
 ### 前端
@@ -80,6 +110,86 @@ qinlong_v2/
 - `GET /api/scheduler/jobs`：定时任务列表
 - `POST /api/scheduler/jobs/{id}/run`：手动执行任务
 
+## API 示例请求 / 响应
+
+### 1. 获取涨跌停板池
+
+请求：
+
+```bash
+curl "http://localhost:8000/api/market/limit-pool?pool_type=up"
+```
+
+响应示例：
+
+```json
+{
+  "summary": {
+    "pool_type": "up",
+    "snap_date": "2026-03-25",
+    "total": 42
+  },
+  "items": [
+    {
+      "code": "sh600000",
+      "code6": "600000",
+      "name": "示例个股",
+      "latest_price": 12.34,
+      "change_percent": 10.01,
+      "reason": "机器人",
+      "plate": "人工智能"
+    }
+  ]
+}
+```
+
+### 2. 获取热门板块
+
+请求：
+
+```bash
+curl "http://localhost:8000/api/market/hot-plates?plate_type=concept"
+```
+
+响应示例：
+
+```json
+[
+  {
+    "plate_code": "GN001",
+    "plate_name": "算力",
+    "change_percent": 4.82,
+    "leading_stock": "示例科技"
+  }
+]
+```
+
+### 3. AI 对话
+
+请求：
+
+```bash
+curl -X POST "http://localhost:8000/api/ai/chat" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "帮我分析今天早盘的主线题材",
+    "agent_id": "market-analyst",
+    "context": {
+      "scene": "dashboard"
+    }
+  }'
+```
+
+响应示例：
+
+```json
+{
+  "reply": "今天早盘资金主要围绕算力、机器人和低空经济展开，算力方向强度最高。",
+  "provider": "openai",
+  "model": "gpt-4o"
+}
+```
+
 ## 环境准备
 
 请先确保你的本地环境具备：
@@ -118,6 +228,19 @@ cp backend/.env.example backend/.env
 - `DATABASE_URL`
 - `OPENAI_API_KEY`
 
+可选配置包括：
+
+- `DEFAULT_AI_PROVIDER`
+- `OPENAI_BASE_URL`
+- `OPENAI_MODEL`
+- `SECONDARY_AI_BASE_URL`
+- `SECONDARY_AI_API_KEY`
+- `SECONDARY_AI_MODEL`
+- `CLS_BASE_URL`
+- `CLS_USER_AGENT`
+- `DEBUG`
+- `CORS_ORIGINS`
+
 如果你使用默认前端开发地址，`CORS_ORIGINS` 可保持模板中的默认值。
 
 ## 数据库迁移
@@ -149,6 +272,52 @@ make dev-frontend
 默认启动地址通常为：`http://localhost:5173`
 
 前端会将 `/api` 请求代理到本地后端。
+
+## 部署说明
+
+当前项目更适合按前后端分开部署：
+
+### 前端部署
+
+你可以将前端部署到静态站点平台，例如 Vercel、Netlify 或自托管 Nginx。
+
+构建命令：
+
+```bash
+cd frontend && npm run build
+```
+
+构建产物目录：
+
+```text
+frontend/dist
+```
+
+部署时需要确保前端请求的 `/api` 能正确转发到后端服务地址。
+
+### 后端部署
+
+后端是标准 FastAPI 应用，可部署到云服务器、容器环境或 PaaS 平台。
+
+示例启动命令：
+
+```bash
+cd backend && uv run uvicorn src.app.main:app --host 0.0.0.0 --port 8000
+```
+
+部署前请确保：
+
+- PostgreSQL 已可访问
+- `backend/.env` 已正确配置
+- 已执行数据库迁移
+- 反向代理或网关已放行 API 路由
+
+### 生产建议
+
+- 使用独立数据库实例
+- 通过反向代理统一前后端域名
+- 将敏感环境变量交给部署平台管理
+- 为调度任务与 AI 接口增加日志和监控
 
 ## 代码质量
 
