@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv --version)",
+      "Bash(pg_isready)",
+      "Bash(psql --version)",
+      "Bash(psql -U postgres -l)",
+      "Bash(psql -l)",
+      "Bash(psql -d qinlong_system -c dt)",
+      "Bash(createdb qinlong_v2)",
+      "Bash(psql qinlong_v2 -f /Users/jamesavery/Documents/Projects/active/qinlong_v2/backend/migrations/001_init.sql)",
+      "Bash(psql qinlong_v2 -f /Users/jamesavery/Documents/Projects/active/qinlong_v2/backend/migrations/002_ai_config.sql)",
+      "Bash(dropdb qinlong_v2)",
+      "Bash(uv sync:*)",
+      "Bash(curl -s http://127.0.0.1:8001/api/market/indices)",
+      "Bash(find /Users/jamesavery/Documents/Projects/active/qinlong_v2/backend -maxdepth 2 -type f -name *.py -o -name *.sql -o -name *.toml)",
+      "Bash(ls /Users/jamesavery/Documents/Projects/active/qinlong-panel/backend/migrations/*.sql)",
+      "Bash(psql:*)",
+      "Bash(uv run:*)",
+      "Bash(cd:*)",
+      "Bash(2)",
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "Bash(npm install:*)",
+      "Bash(grep -n '@router\\\\.' /Users/jamesavery/Documents/Projects/active/qinlong_v2/backend/src/app/api/*.py)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(npx vite:*)",
+      "Read(//Users/jamesavery/Documents/Projects/**)",
+      "Read(//Users/jamesavery/Desktop/**)",
+      "Bash(grep -l 'export default' /Users/jamesavery/Documents/Projects/active/qinlong_v2/frontend/src/pages/*.tsx)",
+      "Bash(cat /Users/jamesavery/Documents/Projects/active/qinlong_v2/backend/src/app/api/*.py)",
+      "Bash(xargs cat:*)"
+    ]
+  }
+}
